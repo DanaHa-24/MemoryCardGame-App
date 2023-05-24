@@ -68,6 +68,10 @@ h1 {
     transform: rotateY(180deg);
 }
 
+.card.matched{
+    transform: rotateY(180deg);
+}
+
 .back-image,
 .front-image{
     position: absolute;
