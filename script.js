@@ -22,13 +22,13 @@ $(document).ready(function() {
         const theme = $('#theme').val();
 
         if (numCards % 2 !== 0) {
-        alert('Number of cards must be even.');
-        return;
+            alert('Number of cards must be even.');
+            return;
         }
 
         if (numCards > 60) {
-        alert('Maximum number of cards is 60.');
-        return;
+            alert('Maximum number of cards is 60.');
+            return;
         }
 
         setupGame(playerName, numCards, theme);
@@ -64,44 +64,41 @@ $(document).ready(function() {
         const usedImages = [];
     
         for (let i = 0; i < numCards / 2; i++) {
-        let randomIndex = Math.floor(Math.random() * themeLength);
-        let cardImage = cardImages[randomIndex];
-    
-        while (usedImages.includes(cardImage)) {
-            randomIndex = Math.floor(Math.random() * themeLength);
-            cardImage = cardImages[randomIndex];
+            let randomIndex = Math.floor(Math.random() * themeLength);
+            let cardImage = cardImages[randomIndex];
+        
+            while (usedImages.includes(cardImage)) {
+                randomIndex = Math.floor(Math.random() * themeLength);
+                cardImage = cardImages[randomIndex];
+            }
+        
+            usedImages.push(cardImage);
+        
+            const cardPair = {
+                id: i,
+                img: cardImage,
+                isMatched: false,
+                isFlipped: false
+            };
+        
+            cardPairs.push(cardPair);
+            cardPairs.push({...cardPair});
         }
-    
-        usedImages.push(cardImage);
-    
-        const cardPair = {
-            id: i,
-            img: cardImage,
-            isMatched: false,
-            isFlipped: false
-        };
-    
-        cardPairs.push(cardPair);
-        cardPairs.push({...cardPair});
-        }
-    
+
         return cardPairs;
     }
     
-    
-
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
-
         return array;
     }
 
     function resizeCards(){
         let cardSize = 160;
-        if(cardSize > 10 && cardSize <= 18)
+        if(numCards > 10 && numCards <= 18)
             cardSize = 120;
         else if (numCards > 18 && numCards <= 36)
             cardSize = 100;
@@ -139,33 +136,38 @@ $(document).ready(function() {
             card.append(cardInner);
 
             card.click(function() {
-            if (!isGameActive || $(this).hasClass('matched') || $(this).hasClass('flipped')) {
-                return;
-            }
-
-            flipCard($(this));
+                if (!isGameActive || $(this).hasClass('matched') || $(this).hasClass('flipped')) {
+                    return;
+                }
+                flipCard($(this));
             });
 
             gameBoard.append(card);
         }
     }
     
-
     function flipCard(card) {
-        card.toggleClass('flipped');
-
-        if ($('.flipped').length === 2) {
-            checkForMatch();
-            numAttempts++;
-            updateAttemptsDisplay();
+        // Check if the card is already flipped or matched
+        if (card.hasClass('flipped') || card.hasClass('matched') || $('.flipped').length === 2) {
+          return;
         }
-
+      
+        card.toggleClass('flipped');
+      
+        if ($('.flipped').length === 2) {
+          // Disable click events on other cards until the match is checked
+          $('.card').not('.flipped').off('click');
+          checkForMatch();
+          numAttempts++;
+          updateAttemptsDisplay();
+        }
+      
         // Display front image when card is flipped and hide the back image
         const frontImage = card.find('.front-image');
         frontImage.toggleClass('hidden');
         card.find('.back-image').addClass('hidden');
     }
-
+      
     function checkForMatch() {
         const flippedCards = $('.flipped');
         const card1 = flippedCards.first();
@@ -174,23 +176,28 @@ $(document).ready(function() {
         const card2Id = card2.attr('data-id');
     
         if (card1Id === card2Id) {
-        card1.removeClass('flipped').addClass('matched');
-        card2.removeClass('flipped').addClass('matched');
-        numMatches++;
-        checkForWin();
+            card1.removeClass('flipped').addClass('matched');
+            card2.removeClass('flipped').addClass('matched');
+            numMatches++;
+            checkForWin();
         } else {
             setTimeout(function() {
-                card1.removeClass('flipped');
-                card2.removeClass('flipped');
-                card1.find('.back-image').toggleClass('hidden');
-                card2.find('.back-image').toggleClass('hidden');
-                card1.find('.front-image').addClass('hidden');
-                card2.find('.front-image').addClass('hidden');
-        }, 1000);
+              card1.removeClass('flipped');
+              card2.removeClass('flipped');
+              card1.find('.back-image').toggleClass('hidden');
+              card2.find('.back-image').toggleClass('hidden');
+              card1.find('.front-image').addClass('hidden');
+              card2.find('.front-image').addClass('hidden');
+            }, 1000);
         }
+        
+        // Re-enable click events on all cards for further matching
+        $('.card').not('.matched').on('click', function() {
+        flipCard($(this));
+        });
     }
     
-    
+      
     function checkForWin() {
         if (numMatches === numCards / 2) {
             stopTimer();
@@ -198,17 +205,16 @@ $(document).ready(function() {
             $('#restart-btn').hide();
             displayGameResult();
         }
-        }
+    }
         
-        function displayGameResult() {
+    function displayGameResult() {
         const gameResult = `Congratulations, you won in ${numAttempts} attempts!`;
         const gameResultDiv = $('<div></div>').text(gameResult);
         const newGameButton = $('<button></button>').attr('id', 'new-game-btn').attr('class','btn btn-primary').text('New Game');
         
         $('#game-info').append(gameResultDiv).append(newGameButton);
-        }
+    }
         
-    
     function restartGame() {
         $('#game-info').empty();
         $('#game-setup').show();
@@ -224,8 +230,8 @@ $(document).ready(function() {
     function startTimer() {
         let seconds = 0;
         timer = setInterval(function() {
-        seconds++;
-        $('#timer').text(`Time: ${seconds} s`);
+            seconds++;
+            $('#timer').text(`Time: ${seconds} s`);
         }, 1000);
     }
 
