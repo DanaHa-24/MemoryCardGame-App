@@ -31,7 +31,15 @@
               <option value="bakery">Bakery</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary">Start Game</button>
+          <div class="form-group">
+            <label for="speed">Speed:</label>
+            <select class="form-control" id="speed" required>
+              <option value="fast">Fast</option>
+              <option value="noraml">Noraml</option>
+              <option value="slow">Slow</option>
+            </select>
+          </div>
+          <button type="submit" id="submit-btn" class="btn btn-primary">Start Game</button>
         </form>
         <div id="game-info">
           <div id="timer"></div>

@@ -26,6 +26,7 @@ function handleGameSetupSubmit(e) {
     const playerName = $('#name').val();
     numCards = parseInt($('#num-cards').val());
     const theme = $('#theme').val();
+    const speed = $('#speed').val();
     
     if (numCards % 2 !== 0) {
         alert('Number of cards must be even.');
@@ -37,7 +38,7 @@ function handleGameSetupSubmit(e) {
         return;
     }
     
-    setupGame(playerName, numCards, theme);
+    setupGame(playerName, numCards, theme, speed);
     $(this).hide();
     isGameActive = true;
 }
@@ -64,7 +65,7 @@ $(document).on('click', '#pause-resume-btn', function() {
     }
 });
 
-function setupGame(playerName, numCards, theme) {
+function setupGame(playerName, numCards, theme, speed) {
     const cardImages = getCardImages(theme);
     cards = generateCardPairs(numCards, cardImages);
     cards = shuffleArray(cards);
@@ -192,7 +193,15 @@ function flipCard(card) {
     frontImage.toggleClass('hidden');
     card.find('.back-image').addClass('hidden');
 }
-    
+  
+function setSpeed(){
+    if (speed === 'Noraml')
+        return 700;
+    if (speed === 'Fast')
+        return 500;
+    else return 1000;
+}
+
 function checkForMatch() {
     const flippedCards = $('.flipped');
     const card1 = flippedCards.first();
@@ -214,7 +223,7 @@ function checkForMatch() {
             card2.find('.back-image').toggleClass('hidden');
             card1.find('.front-image').addClass('hidden');
             card2.find('.front-image').addClass('hidden');
-        }, 1000);
+        }, setSpeed(speed));
     }
     
     // Re-enable click events on all cards for further matching
@@ -235,17 +244,24 @@ function checkForWin() {
         stopTimer();
         isGameActive = false;
         $('#restart-btn').hide();
-        $('#paused-btn').hide();
+        $('#pause-resume-btn').hide();
         displayGameResult();
     }
 }
     
 function displayGameResult() {
-    const gameResult = `Congratulations, you won in ${attemptCount} attempts!`;
+    let gameResult;
+    if (attemptCount > 1){
+        gameResult = `Congratulations, you won in ${attemptCount} attempts!`;
+    } 
+    else{
+        gameResult = `Congratulations, you won in ${attemptCount} attempt!`;
+    }
     const gameResultDiv = $('<div></div>').attr('id','result-info').text(gameResult);
     const newGameButton = $('<button></button>').attr('id', 'new-game-btn').attr('class','btn btn-primary').text('New Game');
     
     $('#game-info').append(gameResultDiv).append(newGameButton);
+    $('#pause-resume-btn').remove();
 }
 
 function startTimer() {
@@ -280,10 +296,11 @@ function resumeTimer() {
         });
 }
 
-function resetTimer() {
+/*function resetTimer() {
     clearInterval(timerInterval);
     $("#timer").text("00:00");
 }
+*/
 
 function resetVariables() {
     attemptCount = 1;
@@ -292,19 +309,22 @@ function resetVariables() {
     isGameActive = false;
     pauseResumeButton.text('Pause');
     isTimerPaused = false;
-  }
+}
   
-  function clearElements() {
-    $('#game-info').hide();
-    $('#result-info').hide();
-    $('#game-board').empty();
-  }
+function clearElements() {
+$('#game-info').hide();
+$('#result-info').hide();
+$('#game-board').empty();
+$('#result-info').remove();
+$('#new-game-btn').remove();
+$('#pause-resume-btn').remove();
+}
+
+function setupEventHandlers() {
+$('#game-setup').submit(handleGameSetupSubmit);
+}
   
-  function setupEventHandlers() {
-    $('#game-setup').submit(handleGameSetupSubmit);
-  }
-  
-  function restartGame() {
+function restartGame() {
     resetVariables();
     clearElements();
     clearInterval(timerInterval);

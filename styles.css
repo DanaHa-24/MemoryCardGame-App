@@ -99,3 +99,11 @@ h1 {
 .hidden {
     display: none;
 }
+
+#submit-btn{
+    margin-top: 20px;
+}
+
+#pause-resume-btn{
+    margin-left: 5px;
+}
