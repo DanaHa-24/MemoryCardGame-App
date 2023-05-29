@@ -3,15 +3,13 @@ $(document).ready(function() {
    
 let numCards;
 let cards = [];
-let timer;
 let timerInterval;
-let attemptCount = 0;
+let attemptCount = 1;
 let matchCount = 0;
 let isGameActive = false;
 let isTimerPaused = false;
-let pausedTime = 0;
+let seconds = 0;
 const gameBoard = $('#game-board');
-let gameTimer = $('<div></div>').attr('id','#timer');
 const restartGameBtn = $('<button></button>').attr('id', 'restart-btn').attr('class','btn btn-primary').text('Restart');
 const pauseResumeButton = $('<button></button>').attr('id', 'pause-resume-btn').attr('class', 'btn btn-primary').text('Pause');
 const cardImages = {
@@ -49,12 +47,11 @@ $('#game-setup').submit(handleGameSetupSubmit);
 
 $(document).on('click', '#restart-btn', function() {
     restartGame();
-    $('#game-setup').submit(handleGameSetupSubmit);
+    
 });
 
 $(document).on('click', '#new-game-btn', function() {
     restartGame();
-    $('#game-setup').submit(handleGameSetupSubmit);
 });
 
 $(document).on('click', '#pause-resume-btn', function() {
@@ -71,12 +68,14 @@ function setupGame(playerName, numCards, theme) {
     const cardImages = getCardImages(theme);
     cards = generateCardPairs(numCards, cardImages);
     cards = shuffleArray(cards);
+    
+    $('#game-info').show();
+    $('#timer').text('Time 00:00');
+    startTimer();
 
-    //$('#game-info').append(gameTimer);
     $('#game-info').append(restartGameBtn);
     $('#game-info').append(pauseResumeButton);
-    displayGameBoard();
-    startTimer(0);
+    displayGameBoard(); 
 }
 
 function getCardImages(theme) {
@@ -236,27 +235,30 @@ function checkForWin() {
         stopTimer();
         isGameActive = false;
         $('#restart-btn').hide();
+        $('#paused-btn').hide();
         displayGameResult();
     }
 }
     
 function displayGameResult() {
     const gameResult = `Congratulations, you won in ${attemptCount} attempts!`;
-    const gameResultDiv = $('<div></div>').text(gameResult);
+    const gameResultDiv = $('<div></div>').attr('id','result-info').text(gameResult);
     const newGameButton = $('<button></button>').attr('id', 'new-game-btn').attr('class','btn btn-primary').text('New Game');
     
     $('#game-info').append(gameResultDiv).append(newGameButton);
 }
 
-function startTimer(seconds) {
-    gameTimer = setInterval(function() {
-        seconds++;
-        $('#timer').text(`Time: ${seconds} s`);
+function startTimer() {
+    timerInterval = setInterval(function() {
+        if(!isTimerPaused)
+            seconds++;
+        $('#timer').text(`Time: ${formatTime(seconds)}`);
     }, 1000);
 }
 
 function stopTimer() {
-    clearInterval(gameTimer);
+    isTimerPaused = true;
+    clearInterval(timerInterval);
 }
 
 function updateAttemptsDisplay() {
@@ -265,34 +267,36 @@ function updateAttemptsDisplay() {
 
 function pauseTimer() {
     isTimerPaused = true;
-    clearInterval(gameTimer);
-    $('.card').not('.flipped').off('click');
+    clearInterval(timerInterval);
+    $('.card').off('click');
     
 }
 
 function resumeTimer() {
     isTimerPaused = false;
-    startTimer($('#timer').text().split(' ')[1]);
-    $('.card').not('.matched').on('click', function() {
+    startTimer();
+    $('.card').on('click', function() {
         flipCard($(this));
         });
 }
 
 function resetTimer() {
     clearInterval(timerInterval);
-    $("#timer").text("0");
+    $("#timer").text("00:00");
 }
 
 function resetVariables() {
-    attemptCount = 0;
+    attemptCount = 1;
     matchCount = 0;
+    seconds = 0;
     isGameActive = false;
     pauseResumeButton.text('Pause');
     isTimerPaused = false;
   }
   
   function clearElements() {
-    $('#game-info').empty();
+    $('#game-info').hide();
+    $('#result-info').hide();
     $('#game-board').empty();
   }
   
@@ -303,11 +307,16 @@ function resetVariables() {
   function restartGame() {
     resetVariables();
     clearElements();
-    setupEventHandlers();
-    clearInterval(gameTimer);
-    
+    clearInterval(timerInterval);
     $('#game-setup').show();
-    startTimer(0);
-  }
+}
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${remainingSeconds}`;
+}
+  
+
   
 
