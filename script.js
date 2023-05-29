@@ -329,6 +329,13 @@ function restartGame() {
     clearElements();
     clearInterval(timerInterval);
     $('#game-setup').show();
+
+    $('#game-info').append(restartGameBtn);
+    $('#game-info').append(pauseResumeButton);
+
+    
+    $('#restart-btn').show();
+    $('#pause-resume-btn').show();
 }
 
 function formatTime(seconds) {
