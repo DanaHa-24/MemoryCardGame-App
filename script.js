@@ -2,6 +2,7 @@ $(document).ready(function() {
 });
    
 let numCards;
+let playerName;
 let cards = [];
 let timerInterval;
 let attemptCount = 1;
@@ -29,7 +30,7 @@ const cardImages = {
 function handleGameSetupSubmit(e) {
     e.preventDefault();
     
-    const playerName = $('#name').val();
+    playerName = $('#name').val();
     numCards = parseInt($('#num-cards').val()) * 2;
     const theme = $('#theme').val();
     const speed = $('#speed').val();
@@ -249,19 +250,19 @@ function playAudio(audioId) {
     audio.play();
 }
     
-function checkForWin() {
+function checkForWin(playerName) {
     if (matchCount === numCards / 2) {
         setTimeout(playAudio('win-sound'),1000);
         stopTimer();
         isGameActive = false;
         $('#restart-btn').hide();
         $('#pause-resume-btn').hide();
-        displayGameResult();
+        displayGameResult(playerName);
     }
 }
     
 function displayGameResult() {
-    const spanCongrats = $('<span></span>').attr('id','congratsText').text('Congratulations!');
+    const spanCongrats = $('<span></span>').attr('id','congratsText').text('Congratulations, ' +playerName+ '!');
     let gameResult = $('<p></p>').attr('id','result');
     const spanNumAttempts = $('<span></span>').attr('id','numAttempts');
     const spanTime = $('<span></span>').attr('id','totalTime');
@@ -332,15 +333,20 @@ function resetVariables() {
 function clearElements() {
     $('#game-info').hide();
     $('#result-info').hide();
+    
     $('#game-board').empty();
     $('#superbText').empty();
+    $('#numAttempts').remove();
+    $('#totalTime').remove();
     $('#new-game-btn').remove();
     $('#pause-resume-btn').remove();
+    $('#result').remove();
 }
 
-function setupEventHandlers() {
+/*function setupEventHandlers() {
     $('#game-setup').submit(handleGameSetupSubmit);
 }
+*/
   
 function restartGame() {
     resetVariables();
