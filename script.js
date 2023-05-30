@@ -11,6 +11,7 @@ let isGameActive = false;
 let isTimerPaused = false;
 let seconds = 0;
 const gameResultDiv = $('<div></div>').attr('id','result-info');
+const gameEnd = $('<div></div>').attr('id','game-end');
 const gameBoard = $('#game-board');
 const restartGameBtn = $('<button></button>').attr('id', 'restart-btn').attr('class','btn btn-danger').text('Restart');
 const pauseResumeButton = $('<button></button>').attr('id', 'pause-resume-btn').attr('class', 'btn btn-warning').text('Pause');
@@ -31,13 +32,13 @@ function handleGameSetupSubmit(e) {
     e.preventDefault();
     
     playerName = $('#name').val();
-    numCards = parseInt($('#num-cards').val()) * 2;
+    numCards = parseInt($('#num-cards').val());
     const theme = $('#theme').val();
     const speed = $('#speed').val();
     if (numCards > 30) {
         return;
     }
-    
+    numCards = numCards * 2;
     setupGame(playerName, numCards, theme, speed);
     $(this).hide();
     isGameActive = true;
@@ -70,10 +71,16 @@ $(document).on('click', '#pause-resume-btn', function() {
 
 $(document).on('click', '.btn-close', function() {
     $('#result-info').hide();
+    gameEnd.show();
+    $('#game-end').append(newGameButton);
+    $('#new-game-btn').css({
+        'display':'none',
+        'margin-top':'10px',
+        'left':'-55px',
+        'width':'120px'
+    });
+    $('#new-game-btn').show();
     
-    $('#game-info').append(newGameButton);
-
-    $(newGameButton).show();
 });
 
 
@@ -245,8 +252,9 @@ function checkForMatch() {
 }
 
 function playAudio(audioId) {
-    const audio = document.getElementById(audioId);
+    let audio = document.getElementById(audioId);
     audio.currentTime = 0;
+    audio.volume = 0.1;
     audio.play();
 }
     
@@ -342,11 +350,6 @@ function clearElements() {
     $('#pause-resume-btn').remove();
     $('#result').remove();
 }
-
-/*function setupEventHandlers() {
-    $('#game-setup').submit(handleGameSetupSubmit);
-}
-*/
   
 function restartGame() {
     resetVariables();

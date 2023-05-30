@@ -16,15 +16,16 @@
         <form id="game-setup">
           <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" required>
+            <input style="width:450px" type="text" class="form-control" id="name" required>
           </div>
           <div class="form-group">
-            <label for="num-cards">Number of Pairs (max 30):</label>
-            <input type="number" class="form-control" id="num-cards" min="1" max="30" required>
+              <label for="num-cards">Number of Pairs (max 30):</label>
+              <input style="width:450px" type="number" class="form-control" id="num-cards" min="1" max="30" required>
           </div>
           <div class="form-group">
             <label for="theme">Theme:</label>
-            <select class="form-control" id="theme" required>
+            <select style="width:450px" class="form-control" id="theme" required>
+              <option selected>Choose...</option>
               <option value="animals">Animals</option>
               <option value="tropical">Tropical</option>
               <option value="wild-west">Wild West</option>
@@ -33,9 +34,10 @@
           </div>
           <div class="form-group">
             <label for="speed">Speed:</label>
-            <select class="form-control" id="speed" required>
+            <select style="width:450px" class="form-control" id="speed" required>
+              <option selected>Choose...</option>
               <option value="fast">Fast</option>
-              <option value="noraml">Noraml</option>
+              <option value="normal">Noraml</option>
               <option value="slow">Slow</option>
             </select>
           </div>
@@ -45,6 +47,7 @@
           <div id="timer"></div>
         </div>
         <div id="game-board"></div>
+        <div id="game-end"></div>
       </div>
       <audio id="flip-sound" src="./audio/Card-flip.mp3"></audio>
       <audio id="match-sound" src="./audio/match.mp3"></audio>

@@ -16,6 +16,14 @@ h1 {
     background-color: #fff;
 }
 
+#game-setup{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: column;
+}
+
 #game-board {
     display: flex;
     flex-wrap: wrap;
@@ -48,6 +56,17 @@ h1 {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+}
+
+#game-end{
+    position:absolute;
+    position: fixed;
+    bottom: 7%;
+    left: 50%;
+    margin: 0;
+    position: absolute;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 #timer {
