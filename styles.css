@@ -39,7 +39,6 @@ h1 {
     transform: scale(1);
     transform-style: preserve-3d;
     transition: transform .5s;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -58,6 +57,7 @@ h1 {
 
 #restart-btn {
     font-size: 18px;
+    width: 100px;
 }
 
 #new-game-btn{
@@ -100,10 +100,112 @@ h1 {
     display: none;
 }
 
+#superbText{
+    position: absolute;
+    top: 50px;
+    font-size: 50px;
+    font-family: cursive;
+    left: 80px
+}
+
+#msgText{
+    position: absolute;
+    top: 160px;
+    left: 30px;
+    font-family: cursive;
+    font-size:large;
+}
+
+#congratsText{
+    position: absolute;
+    top: -10px;
+    left: 70px;
+    font-family: cursive;
+    font-size: 25px;
+}
+
+#numAttempts{
+    position: absolute;
+    width: max-content;
+    top: 70px;
+    left: 90px;
+    font-family: cursive;
+    font-size: large;
+}
+
+#totalTime{
+    position: absolute;
+    width: max-content;
+    top: 100px;
+    left: 90px;
+    font-family: cursive;
+    font-size: large;
+}
+
+.btn-close{
+    display: block;
+    width: 32px;
+    position: absolute !important;
+    left: 350px;
+    font-size: 20px;
+    top: 10px;
+}
+
+#new-game-btn{
+    position: absolute;
+    bottom: 30px;
+    right: 140px;
+}
+
 #submit-btn{
     margin-top: 20px;
 }
 
 #pause-resume-btn{
     margin-left: 5px;
+    font-size: 18px;
+    width: 100px;
+    text-align: center;
+}
+
+#pause-resume-btn :active{
+    display: flex;
+    text-align: center;
+}
+
+#result-info{
+    animation-name: bounceIn;
+    animation-duration: 3s;
+    font-size: 1rem;
+    margin: 0 auto;
+    text-align: center;
+    z-index: 1000;
+    padding: 20px;
+    min-height: 200px;
+    position: absolute;
+    opacity: 1;
+    background-color: #FFFFFF;
+    border: 2px solid #505050;
+    overflow: visible;
+    box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 0px 5px 9px 5px rgba(0,0,0,0);
+    box-sizing: border-box;
+    left: 0;
+    max-width: 400px !important;
+    max-height: 400px !important;
+    right: 0;
+    width: 100% !important;
+    height: 100% !important;
+    top: 110px;
+}
+
+@keyframes bounceIn {
+    0% {
+      transform: scale(0.5);
+    }
+    70% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
 }

@@ -9,9 +9,15 @@ let matchCount = 0;
 let isGameActive = false;
 let isTimerPaused = false;
 let seconds = 0;
+const gameResultDiv = $('<div></div>').attr('id','result-info');
 const gameBoard = $('#game-board');
-const restartGameBtn = $('<button></button>').attr('id', 'restart-btn').attr('class','btn btn-primary').text('Restart');
-const pauseResumeButton = $('<button></button>').attr('id', 'pause-resume-btn').attr('class', 'btn btn-primary').text('Pause');
+const restartGameBtn = $('<button></button>').attr('id', 'restart-btn').attr('class','btn btn-danger').text('Restart');
+const pauseResumeButton = $('<button></button>').attr('id', 'pause-resume-btn').attr('class', 'btn btn-warning').text('Pause');
+
+const newGameButton = $('<button></button>').attr('id', 'new-game-btn').attr('class','btn btn-primary').text('New Game');
+const playerWinText = $('<div></div>').attr('id','superbText');
+const msgText = $('<div></div>').attr('id','msgText');
+const closeBtn = $('<button></button>').attr('type','button').attr('class','btn-close').attr('aria-label','Close');
 const cardImages = {
     'animals': ['./images/animals/bat.png', './images/animals/chameleon.png', './images/animals/chick.png', './images/animals/crab.png', './images/animals/crocodile.png', './images/animals/dolphin.png', './images/animals/elephant.png', './images/animals/fish.png', './images/animals/fox.png', './images/animals/frog.png', './images/animals/giraffe.png', './images/animals/hen.png', './images/animals/jellyfish.png', './images/animals/koala.png', './images/animals/lion.png', './images/animals/monkey.png', './images/animals/mouse.png', './images/animals/octopus.png', './images/animals/owl.png', './images/animals/panda.png', './images/animals/peacock.png', './images/animals/penguin.png', './images/animals/seahorse.png', './images/animals/shark.png', './images/animals/sheep.png', './images/animals/sloth.png', './images/animals/snake.png', './images/animals/squirrel.png', './images/animals/tiger.png', './images/animals/toucan.png', './images/animals/turtle.png', './images/animals/whale.png'],
     'tropical': ['./images/tropical/banana.png', './images/tropical/beach-house.png', './images/tropical/bird-of-paradise.png', './images/tropical/boy.png', './images/tropical/butterfly.png', './images/tropical/cactus.png', './images/tropical/chameleon.png', './images/tropical/clownfish.png', './images/tropical/cocktail.png', './images/tropical/coconut-drink.png', './images/tropical/crab.png', './images/tropical/dolphin.png', './images/tropical/dragon-fruit.png', './images/tropical/fish.png', './images/tropical/flamingo.png', './images/tropical/girl.png', './images/tropical/hawaiian-shirt.png', './images/tropical/hibiscus.png', './images/tropical/hummingbird.png', './images/tropical/ice-cream.png', './images/tropical/jellyfish.png', './images/tropical/macaw.png', './images/tropical/mango.png', './images/tropical/mermaid.png', './images/tropical/merman.png', './images/tropical/monstera-leaf.png', './images/tropical/octopus.png', './images/tropical/orchid.png', './images/tropical/palm.png', './images/tropical/papaya.png', './images/tropical/pearl.png', './images/tropical/pelican.png', './images/tropical/popsicle.png', './images/tropical/sand-castle.png', './images/tropical/seagull.png', './images/tropical/sea-horse.png', './images/tropical/shell.png', './images/tropical/starfish.png', './images/tropical/stingray.png', './images/tropical/succulent.png', './images/tropical/sun.png', './images/tropical/sun-umbrella.png', './images/tropical/surfboard.png', './images/tropical/thermometer.png', './images/tropical/toucan.png', './images/tropical/turtle.png', './images/tropical/volcano.png'],
@@ -24,17 +30,10 @@ function handleGameSetupSubmit(e) {
     e.preventDefault();
     
     const playerName = $('#name').val();
-    numCards = parseInt($('#num-cards').val());
+    numCards = parseInt($('#num-cards').val()) * 2;
     const theme = $('#theme').val();
     const speed = $('#speed').val();
-    
-    if (numCards % 2 !== 0) {
-        alert('Number of cards must be even.');
-        return;
-    }
-    
-    if (numCards > 60) {
-        alert('Maximum number of cards is 60.');
+    if (numCards > 30) {
         return;
     }
     
@@ -48,22 +47,34 @@ $('#game-setup').submit(handleGameSetupSubmit);
 
 $(document).on('click', '#restart-btn', function() {
     restartGame();
-    
 });
 
 $(document).on('click', '#new-game-btn', function() {
     restartGame();
+    $('#new-game-btn').removeAttr('style');
 });
 
 $(document).on('click', '#pause-resume-btn', function() {
     if (isTimerPaused) {
+        pauseResumeButton.attr('class','btn btn-warning');
         resumeTimer();
         pauseResumeButton.text('Pause');
     } else {
+        pauseResumeButton.attr('class','btn btn-success');
         pauseTimer();
         pauseResumeButton.text('Resume');
+        pauseResumeButton.css('text-align','center');
     }
 });
+
+$(document).on('click', '.btn-close', function() {
+    $('#result-info').hide();
+    
+    $('#game-info').append(newGameButton);
+
+    $(newGameButton).show();
+});
+
 
 function setupGame(playerName, numCards, theme, speed) {
     const cardImages = getCardImages(theme);
@@ -250,18 +261,31 @@ function checkForWin() {
 }
     
 function displayGameResult() {
-    let gameResult;
+    const spanCongrats = $('<span></span>').attr('id','congratsText').text('Congratulations!');
+    let gameResult = $('<p></p>').attr('id','result');
+    const spanNumAttempts = $('<span></span>').attr('id','numAttempts');
+    const spanTime = $('<span></span>').attr('id','totalTime');
     if (attemptCount > 1){
-        gameResult = `Congratulations, you won in ${attemptCount} attempts!`;
+        spanNumAttempts.text('You got ' + attemptCount + ' attempts!');
     } 
     else{
-        gameResult = `Congratulations, you won in ${attemptCount} attempt!`;
+        spanNumAttempts.text('You got ' + attemptCount + ' attempt!');
     }
-    const gameResultDiv = $('<div></div>').attr('id','result-info').text(gameResult);
-    const newGameButton = $('<button></button>').attr('id', 'new-game-btn').attr('class','btn btn-primary').text('New Game');
+    spanTime.text('You did it in ' + formatTime(seconds));
+    $('#game-info').append(gameResultDiv);
+    gameResult.append(spanCongrats).append(spanNumAttempts).append(spanTime);
     
-    $('#game-info').append(gameResultDiv).append(newGameButton);
+    $('#result-info').append(closeBtn);
+    playerWin();
+    $('#result-info').append(playerWinText);
+    
+    $(msgText).append(gameResult);
+    $('#result-info').append(msgText);
+    
+    $('#result-info').append(newGameButton);
     $('#pause-resume-btn').remove();
+    $('#result-info').removeAttr('style');
+    $('#game-info').append(gameResultDiv);
 }
 
 function startTimer() {
@@ -296,12 +320,6 @@ function resumeTimer() {
         });
 }
 
-/*function resetTimer() {
-    clearInterval(timerInterval);
-    $("#timer").text("00:00");
-}
-*/
-
 function resetVariables() {
     attemptCount = 1;
     matchCount = 0;
@@ -312,16 +330,16 @@ function resetVariables() {
 }
   
 function clearElements() {
-$('#game-info').hide();
-$('#result-info').hide();
-$('#game-board').empty();
-$('#result-info').remove();
-$('#new-game-btn').remove();
-$('#pause-resume-btn').remove();
+    $('#game-info').hide();
+    $('#result-info').hide();
+    $('#game-board').empty();
+    $('#superbText').empty();
+    $('#new-game-btn').remove();
+    $('#pause-resume-btn').remove();
 }
 
 function setupEventHandlers() {
-$('#game-setup').submit(handleGameSetupSubmit);
+    $('#game-setup').submit(handleGameSetupSubmit);
 }
   
 function restartGame() {
@@ -332,7 +350,6 @@ function restartGame() {
 
     $('#game-info').append(restartGameBtn);
     $('#game-info').append(pauseResumeButton);
-
     
     $('#restart-btn').show();
     $('#pause-resume-btn').show();
@@ -344,6 +361,13 @@ function formatTime(seconds) {
     return `${minutes}:${remainingSeconds}`;
 }
   
-
+function playerWin(){
+    let char;
+    let word = "SUPERB :)";
+    for(let i=0; i < 10; i++){
+        char = $('<span></span>').text(word[i]).css('color', 'hsl(' + (i * 40) + ', 80%, 50%)');
+        $(playerWinText).append(char);
+    }      
+}
   
 
